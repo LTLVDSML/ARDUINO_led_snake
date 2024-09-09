@@ -19,6 +19,9 @@
 
 void setup() {
   // put your setup code here, to run once:
+  // DEBUG 
+  Serial.begin(9600);
+  
   pinMode(l1, OUTPUT); 
   pinMode(l2, OUTPUT);
   pinMode(l3, OUTPUT);
@@ -56,34 +59,123 @@ void setup() {
   digitalWrite(c7, LOW);
   digitalWrite(c8, LOW);
 
-////////////////////////////////////
+  delay(2000);
 
-  delay(1000);
-
-  digitalWrite(l8,LOW);
-  digitalWrite(c4,HIGH);
-  digitalWrite(c7,HIGH);
-
-  int config[8][8] = {{1, 0, 0, 0, 0, 0, 0, 0},
-                     {1, 0, 0, 0, 0, 0, 0, 0},
-                     {1, 0, 0, 0, 0, 0, 0, 0},
-                     {1, 0, 0, 0, 0, 0, 0, 0},
-                     {1, 0, 0, 0, 0, 0, 0, 0},
-                     {1, 0, 0, 0, 0, 0, 0, 0},
-                     {1, 0, 0, 0, 0, 0, 0, 0},
-                     {1, 0, 0, 0, 0, 0, 0, 0}};
+// Verification integrite de toutes les LED
+  int config[8][8] = {{1, 1, 1, 1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1, 1, 1, 1}};
 
   configMatrice(config);
   
 }
+
+///////////////////////////////////////////////////////////
 
 void loop() {
   // put your main code here, to run repeatedly:
 
 }
 
+///////////////////////////////////////////////////////////
+
 void configMatrice(int matrice[8][8]){
+// Fonction affichant le contenu d'une matrice 8x8 sur l'afficheur 
+
+
+// remise a 0
+digitalWrite(l1, HIGH);
+digitalWrite(l2, HIGH);
+digitalWrite(l3, HIGH);
+digitalWrite(l4, HIGH);
+digitalWrite(l5, HIGH); 
+digitalWrite(l6, HIGH);
+digitalWrite(l7, HIGH);
+digitalWrite(l8, HIGH);
+
+digitalWrite(c1, LOW); 
+digitalWrite(c2, LOW);
+digitalWrite(c3, LOW);
+digitalWrite(c4, LOW);
+digitalWrite(c5, LOW); 
+digitalWrite(c6, LOW);
+digitalWrite(c7, LOW);
+digitalWrite(c8, LOW);
+
+delay(200);
+
+// pour chaque ligne
+for (int ligne = 0; ligne < 8; ligne++){
   
-Serial.print("bite");
+  // pour chaque colonne
+  for (int colonne = 0; colonne < 8; colonne++){
+    
+    // detection
+    int valeur = matrice[ligne][colonne];
+    Serial.print(matrice[ligne][colonne]);
+    if (valeur == 1){
+      // lignes
+      if (ligne == 0){
+        digitalWrite(l1, LOW); 
+      }
+      if (ligne == 1){
+        digitalWrite(l2, LOW); 
+      }
+      if (ligne == 2){
+        digitalWrite(l3, LOW); 
+      }
+      if (ligne == 3){
+        digitalWrite(l4, LOW); 
+      }
+      if (ligne == 4){
+        digitalWrite(l5, LOW); 
+      }
+      if (ligne == 5){
+        digitalWrite(l6, LOW); 
+      }
+      if (ligne == 6){
+        digitalWrite(l7, LOW); 
+      }
+      if (ligne == 7){
+        digitalWrite(l8, LOW); 
+        
+      }
+
+      // colonnes
+      if (colonne == 0){
+        digitalWrite(c1, HIGH);         
+      }
+      if (colonne == 1){
+        digitalWrite(c2, HIGH);         
+      }
+      if (colonne == 2){
+        digitalWrite(c3, HIGH);         
+      }
+      if (colonne == 3){
+        digitalWrite(c4, HIGH);        
+      }
+      if (colonne == 4){
+        digitalWrite(c5, HIGH);         
+      }
+      if (colonne == 5){
+        digitalWrite(c6, HIGH);         
+      }
+      if (colonne == 6){
+        digitalWrite(c7, HIGH);         
+      }
+      if (colonne == 7){
+        digitalWrite(c8, HIGH);         
+      }
+      
+    }
+
+  }
+
+}
 
 }
