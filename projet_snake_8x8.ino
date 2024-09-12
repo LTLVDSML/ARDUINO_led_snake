@@ -62,17 +62,34 @@ void setup() {
   delay(2000);
 
 // Verification integrite de toutes les LED
-  int config[8][8] = {{1, 1, 1, 1, 1, 1, 1, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1}};
+  byte config[8][8] = {{1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1}};
 
   configMatrice(config);
+  delay(2000);
   
+// Verification extinction de toutes les LED
+  for (byte i = 0; i < 8; i++) {
+        for (byte j = 0; j < 8; j++) {
+            config[i][j] = 0;
+        }
+    }
+    
+  configMatrice(config);
+  delay(2000);
+
+// Position initiale
+  config[3][3] = 1; 
+
+  configMatrice(config);
+  delay(2000); 
+
 }
 
 ///////////////////////////////////////////////////////////
@@ -84,7 +101,7 @@ void loop() {
 
 ///////////////////////////////////////////////////////////
 
-void configMatrice(int matrice[8][8]){
+void configMatrice(byte matrice[8][8]){
 // Fonction affichant le contenu d'une matrice 8x8 sur l'afficheur 
 
 
@@ -110,14 +127,14 @@ digitalWrite(c8, LOW);
 delay(200);
 
 // pour chaque ligne
-for (int ligne = 0; ligne < 8; ligne++){
+for (byte ligne = 0; ligne < 8; ligne++){
   
   // pour chaque colonne
-  for (int colonne = 0; colonne < 8; colonne++){
+  for (byte colonne = 0; colonne < 8; colonne++){
     
     // detection
-    int valeur = matrice[ligne][colonne];
-    Serial.print(matrice[ligne][colonne]);
+    byte valeur = matrice[ligne][colonne];
+    
     if (valeur == 1){
       // lignes
       if (ligne == 0){
