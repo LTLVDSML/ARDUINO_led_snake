@@ -187,12 +187,74 @@ for (byte ligne = 0; ligne < 8; ligne++){
       }
       if (colonne == 7){
         digitalWrite(c8, HIGH);         
-      }
-      
+      }      
     }
-
   }
-
+}
 }
 
+/////////////////////////////
+
+byte mouvement(byte direction, byte ligne, byte colonne, byte config[8][8]){
+
+config[ligne][colonne] = 0;
+
+//haut
+if (direction == 1){
+
+  if (ligne == 0){
+    config[7][colonne] = 1;
+    ligne = 7;
+  }
+  else{
+    config[ligne-1][colonne] = 1;
+    ligne = ligne-1;
+  }
+}
+
+//droite
+if (direction == 2){
+
+  if (colonne == 7){
+    config[ligne][0] = 1;
+    colonne = 0;
+  }
+  else{
+    config[ligne][colonne+1] = 1;
+    colonne = colonne+1;
+  }
+}
+
+//bas
+if (direction == 3){
+
+  if (ligne == 7){
+    config[0][colonne] = 1;
+    ligne = 0;
+  }
+  else{
+    config[ligne+1][colonne] = 1;
+    ligne = ligne+1;
+  }
+}
+
+//gauche
+if (direction == 1){
+
+  if (colonne == 0){
+    config[ligne][7] = 1;
+    ligne = 7;
+  }
+  else{
+    config[ligne][colonne-1] = 1;
+    colonne = colonne-1;
+  }
+}
+
+// Structure sortie
+mouvement[0] = ligne;
+mouvement[1] = colonne;
+mouvement[2] = config;
+
+return mouvement;
 }
