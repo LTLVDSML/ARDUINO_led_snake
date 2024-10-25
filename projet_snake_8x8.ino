@@ -16,7 +16,24 @@
 #define c7 A3
 #define c8 A2
 
+////////////////////////////////////////////////////////////
 
+// Position initiale
+  byte direction = 1;
+  byte ligne = 3;
+  byte colonne = 3;
+
+  byte config[8][8] = {{1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1},
+                       {1, 1, 1, 1, 1, 1, 1, 1}};
+
+
+////////////////////////////////////////////////////////////
 void setup() {
   // put your setup code here, to run once:
   // DEBUG 
@@ -62,15 +79,6 @@ void setup() {
   delay(2000);
 
 // Verification integrite de toutes les LED
-  byte config[8][8] = {{1, 1, 1, 1, 1, 1, 1, 1},
-                       {1, 1, 1, 1, 1, 1, 1, 1},
-                       {1, 1, 1, 1, 1, 1, 1, 1},
-                       {1, 1, 1, 1, 1, 1, 1, 1},
-                       {1, 1, 1, 1, 1, 1, 1, 1},
-                       {1, 1, 1, 1, 1, 1, 1, 1},
-                       {1, 1, 1, 1, 1, 1, 1, 1},
-                       {1, 1, 1, 1, 1, 1, 1, 1}};
-
   configMatrice(config);
   delay(2000);
   
@@ -84,8 +92,8 @@ void setup() {
   configMatrice(config);
   delay(2000);
 
-// Position initiale
-  config[3][3] = 1; 
+  // Positionnement
+  config[ligne][colonne] = 1; 
 
   configMatrice(config);
   delay(2000); 
@@ -96,6 +104,12 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+
+  mouvement(direction, ligne, colonne, config);
+  configMatrice(config);
+  delay(1000);
+  Serial.print(ligne);
+  Serial.print(colonne);
 
 }
 
@@ -195,18 +209,18 @@ for (byte ligne = 0; ligne < 8; ligne++){
 
 /////////////////////////////
 
-byte mouvement(byte direction, byte ligne, byte colonne, byte config[8][8]){
-
-config[ligne][colonne] = 0;
+void mouvement(byte direction, byte ligne, byte colonne, byte config[8][8]){
 
 //haut
 if (direction == 1){
 
   if (ligne == 0){
+    config[0][colonne] = 0;
     config[7][colonne] = 1;
     ligne = 7;
   }
   else{
+    config[ligne][colonne] = 0;
     config[ligne-1][colonne] = 1;
     ligne = ligne-1;
   }
@@ -216,10 +230,12 @@ if (direction == 1){
 if (direction == 2){
 
   if (colonne == 7){
+    config[ligne][7] = 0;
     config[ligne][0] = 1;
     colonne = 0;
   }
   else{
+    config[ligne][colonne] = 0;
     config[ligne][colonne+1] = 1;
     colonne = colonne+1;
   }
@@ -229,10 +245,12 @@ if (direction == 2){
 if (direction == 3){
 
   if (ligne == 7){
+    config[7][colonne] = 0;
     config[0][colonne] = 1;
     ligne = 0;
   }
   else{
+    config[ligne][colonne] = 0;
     config[ligne+1][colonne] = 1;
     ligne = ligne+1;
   }
@@ -242,19 +260,17 @@ if (direction == 3){
 if (direction == 1){
 
   if (colonne == 0){
+    config[ligne][0] = 0;
     config[ligne][7] = 1;
     ligne = 7;
   }
   else{
+    config[ligne][colonne] = 0;
     config[ligne][colonne-1] = 1;
     colonne = colonne-1;
   }
 }
 
-// Structure sortie
-mouvement[0] = ligne;
-mouvement[1] = colonne;
-mouvement[2] = config;
+return;
 
-return mouvement;
 }
