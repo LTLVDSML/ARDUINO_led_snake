@@ -16,14 +16,16 @@
 #define c7 A3
 #define c8 A2
 
+#define b1 A1
+#define b2 A0
+
 ////////////////////////////////////////////////////////////
 
 // Position initiale
-  byte direction = 1;
-  byte ligne = 3;
-  byte colonne = 3;
+  int direction = 3; // haut = 0, droite = 1, bas = 2, gauche = 3
+  int position[2] = {3,3};
 
-  byte config[8][8] = {{1, 1, 1, 1, 1, 1, 1, 1},
+  int matrice[8][8] = {{1, 1, 1, 1, 1, 1, 1, 1},
                        {1, 1, 1, 1, 1, 1, 1, 1},
                        {1, 1, 1, 1, 1, 1, 1, 1},
                        {1, 1, 1, 1, 1, 1, 1, 1},
@@ -76,27 +78,27 @@ void setup() {
   digitalWrite(c7, LOW);
   digitalWrite(c8, LOW);
 
-  delay(2000);
+  delay(100);
 
 // Verification integrite de toutes les LED
-  configMatrice(config);
+  configMatrice(matrice);
   delay(2000);
   
 // Verification extinction de toutes les LED
-  for (byte i = 0; i < 8; i++) {
-        for (byte j = 0; j < 8; j++) {
-            config[i][j] = 0;
+  for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            matrice[i][j] = 0;
         }
     }
     
-  configMatrice(config);
+  configMatrice(matrice);
   delay(2000);
 
   // Positionnement
-  config[ligne][colonne] = 1; 
+  matrice[position[0]][position[1]] = 1; 
 
-  configMatrice(config);
-  delay(2000); 
+  configMatrice(matrice);
+  delay(1000); 
 
 }
 
@@ -105,17 +107,20 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  mouvement(direction, ligne, colonne, config);
-  configMatrice(config);
+  detectionCommande(&direction);
+  mouvement(&position[0], direction, 7);
+  modifMatrice(&matrice[0][0], &position[0], 8);
+  configMatrice(matrice);
   delay(1000);
-  Serial.print(ligne);
-  Serial.print(colonne);
+
+  Serial.println(direction);
+
 
 }
 
 ///////////////////////////////////////////////////////////
 
-void configMatrice(byte matrice[8][8]){
+void configMatrice(int matrice[8][8]){
 // Fonction affichant le contenu d'une matrice 8x8 sur l'afficheur 
 
 
@@ -141,13 +146,13 @@ digitalWrite(c8, LOW);
 delay(200);
 
 // pour chaque ligne
-for (byte ligne = 0; ligne < 8; ligne++){
+for (int ligne = 0; ligne < 8; ligne++){
   
   // pour chaque colonne
-  for (byte colonne = 0; colonne < 8; colonne++){
+  for (int colonne = 0; colonne < 8; colonne++){
     
     // detection
-    byte valeur = matrice[ligne][colonne];
+    int valeur = matrice[ligne][colonne];
     
     if (valeur == 1){
       // lignes
@@ -209,68 +214,89 @@ for (byte ligne = 0; ligne < 8; ligne++){
 
 /////////////////////////////
 
-void mouvement(byte direction, byte ligne, byte colonne, byte config[8][8]){
+void mouvement(int* addrPosition, int direction, int tailleMatrice) {
 
-//haut
-if (direction == 1){
-
-  if (ligne == 0){
-    config[0][colonne] = 0;
-    config[7][colonne] = 1;
-    ligne = 7;
-  }
-  else{
-    config[ligne][colonne] = 0;
-    config[ligne-1][colonne] = 1;
-    ligne = ligne-1;
-  }
+    // droite
+    if (direction == 1){
+        *(addrPosition + 1) = *(addrPosition + 1) + 1;
+        if (*(addrPosition + 1) == tailleMatrice+1){
+          *(addrPosition + 1) = 0;
+        }
+    }
+    // gauche
+    if (direction == 3){
+        *(addrPosition + 1) = *(addrPosition + 1) - 1;
+        if (*(addrPosition + 1) == -1){
+          *(addrPosition + 1) = tailleMatrice;
+        }
+    }
+    // haut
+    if (direction == 0){
+        *addrPosition = *addrPosition + 1;
+        if (*addrPosition == tailleMatrice+1){
+          *addrPosition = 0;
+        }
+    }
+    // bas
+    if (direction == 2){
+        *addrPosition = *addrPosition - 1;
+        if (*addrPosition == -1){
+          *addrPosition = tailleMatrice;
+        }
+    }
 }
 
-//droite
-if (direction == 2){
+/////////////////////////////
 
-  if (colonne == 7){
-    config[ligne][7] = 0;
-    config[ligne][0] = 1;
-    colonne = 0;
-  }
-  else{
-    config[ligne][colonne] = 0;
-    config[ligne][colonne+1] = 1;
-    colonne = colonne+1;
-  }
+void modifMatrice(int* addrMatrice, int* addrPosition, int tailleMatrice){
+    // Remise a 0
+    for (int index = 0; index < tailleMatrice*tailleMatrice; index++){
+        *(addrMatrice + index) = 0;
+    }
+
+    // Nouvelle position
+    int positionX = *(addrPosition);
+    int positionY = *(addrPosition + 1);
+    int indexPosition = positionX + 8 * positionY;
+    *(addrMatrice + indexPosition) = 1;
 }
 
-//bas
-if (direction == 3){
+/////////////////////////////
 
-  if (ligne == 7){
-    config[7][colonne] = 0;
-    config[0][colonne] = 1;
-    ligne = 0;
-  }
-  else{
-    config[ligne][colonne] = 0;
-    config[ligne+1][colonne] = 1;
-    ligne = ligne+1;
-  }
+void afficherMatrice(int* addrMatrice, int tailleMatrice){
+    int valeur = 0;
+    int index = 0;
+    
+    for (int ligne = 0; ligne < tailleMatrice; ligne++){
+        for (int colonne = 0; colonne < tailleMatrice; colonne++){
+            valeur = *(addrMatrice + index);
+            index = index + 1;
+            printf("%d ", valeur);
+        }
+        printf("\n ");
+    }
+    printf("\n ");    
 }
 
-//gauche
-if (direction == 1){
+/////////////////////////////
 
-  if (colonne == 0){
-    config[ligne][0] = 0;
-    config[ligne][7] = 1;
-    ligne = 7;
+void detectionCommande(int* addrDirection){
+  
+  byte boutonGauche = analogRead(b2);
+  byte boutonDroite = analogRead(b1);
+
+  if (boutonDroite < 200){
+    *addrDirection = *addrDirection + 1;
+    if (*addrDirection == 4){
+      *addrDirection = 0;
+    }
   }
-  else{
-    config[ligne][colonne] = 0;
-    config[ligne][colonne-1] = 1;
-    colonne = colonne-1;
+  
+  if (boutonGauche < 200){
+    *addrDirection = *addrDirection - 1;
+    if (*addrDirection == -1){
+      *addrDirection = 3;
+    }
   }
-}
-
-return;
-
+  
 }
