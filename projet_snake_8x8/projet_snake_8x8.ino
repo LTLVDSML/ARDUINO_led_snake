@@ -107,14 +107,19 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
+  // Detection pression bouton
   detectionCommande(&direction);
+  // Mouvement du mobile
   mouvement(&position[0], direction, 7);
+  // Modification de la matrice 
   modifMatrice(&matrice[0][0], &position[0], 8);
+  // Affichage matrice
   configMatrice(matrice);
+  // Delay entre chaque iteration
   delay(1000);
 
+  // DEBUG
   Serial.println(direction);
-
 
 }
 
@@ -151,7 +156,7 @@ for (int ligne = 0; ligne < 8; ligne++){
   // pour chaque colonne
   for (int colonne = 0; colonne < 8; colonne++){
     
-    // detection
+    // detection objets
     int valeur = matrice[ligne][colonne];
     
     if (valeur == 1){
@@ -215,6 +220,7 @@ for (int ligne = 0; ligne < 8; ligne++){
 /////////////////////////////
 
 void mouvement(int* addrPosition, int direction, int tailleMatrice) {
+// Fonction deplacant le mobile dans la matrice en fonction de sa direction
 
     // droite
     if (direction == 1){
@@ -249,6 +255,7 @@ void mouvement(int* addrPosition, int direction, int tailleMatrice) {
 /////////////////////////////
 
 void modifMatrice(int* addrMatrice, int* addrPosition, int tailleMatrice){
+// fonction modifiant la matrice avec la nouvelle position du mobile
     // Remise a 0
     for (int index = 0; index < tailleMatrice*tailleMatrice; index++){
         *(addrMatrice + index) = 0;
@@ -264,6 +271,7 @@ void modifMatrice(int* addrMatrice, int* addrPosition, int tailleMatrice){
 /////////////////////////////
 
 void afficherMatrice(int* addrMatrice, int tailleMatrice){
+// Fonction utilisee pour le deboguage affichant la matrice dans la console
     int valeur = 0;
     int index = 0;
     
@@ -281,6 +289,7 @@ void afficherMatrice(int* addrMatrice, int tailleMatrice){
 /////////////////////////////
 
 void detectionCommande(int* addrDirection){
+// Fonction detectant la pression d'un bouton et modifiant la direction du mobile en consequence
   
   byte boutonGauche = analogRead(b2);
   byte boutonDroite = analogRead(b1);
